@@ -2,7 +2,7 @@ const Dev = require("../models/Dev");
 
 module.exports = {
   async store(req, res) {
-    try {
+    /* try {
       const { devId: idTargetDev } = req.params;
       const { user: idCurrentDev } = req.headers;
 
@@ -15,6 +15,24 @@ module.exports = {
       return res.json(currentDev);
     } catch (e) {
       return res.status(400).json({ error: "Dev is not exists!" });
+    } */
+    const { devId: idTargetDev } = req.params;
+    const { user: idCurrentDev } = req.headers;
+
+    const currentDev = await Dev.findById(idCurrentDev);
+    const targetDev = await Dev.findById(idTargetDev);
+
+    if (!targetDev) {
+      return res.status(400).json({ error: "Dev is not exists!" });
     }
+
+    if (targetDev.likes.includes(currentDev._id)) {
+      console.log("Deu match");
+    }
+
+    currentDev.likes.push(targetDev._id);
+    await currentDev.save();
+
+    return res.json(currentDev);
   }
 };
