@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
-import {Container, Logo, Form, Input, Button, TextButton} from './styles';
+import {Container, Logo, Input, Button, TextButton} from './styles';
 import logo from '~/assets/logo.png';
 import api from '~/services/api';
 import {ActivityIndicator} from 'react-native';
+import store from '~/services/storage';
 
 export default function Login({navigation}) {
   const [username, setUsername] = useState('');
@@ -12,6 +13,7 @@ export default function Login({navigation}) {
   async function handleSubmit() {
     setLoading(true);
     const {data} = await api.post('/devs', {username});
+    await store.save('User', data._id);
     navigation.navigate('Main', {id: data._id});
   }
 
@@ -21,7 +23,7 @@ export default function Login({navigation}) {
 
       <Input
         value={username}
-        onChangeText={text => setUsername(text)}
+        onChangeText={setUsername}
         placeholder="Informe seu usuário Git"
       />
       <Button onPress={handleSubmit}>

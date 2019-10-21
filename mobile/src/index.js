@@ -1,9 +1,21 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import '~/config/ReactotronConfig';
 
-import Routes from '~/routes';
+import createNavigator from '~/routes';
+import store from './services/storage';
 
-const App = () => <Routes />;
+export default function App({navigation}) {
+  const [user, setUser] = useState(false); //eslint-disable-line
 
-export default App;
+  /* useEffect(() => {
+    store.get('User').then(id => {
+      if (id) {
+        setUser(true);
+      }
+    });
+  }, []);*/ //eslint-disable-line
+
+  const Routes = createNavigator(user);
+  return <Routes />;
+}
