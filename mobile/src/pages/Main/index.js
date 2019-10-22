@@ -11,12 +11,15 @@ import {
   Actions,
   Button,
   ButtonImage,
+  Empyt,
 } from './styles';
 
+import {TouchableOpacity} from 'react-native';
 import logo from '~/assets/logo.png';
 import like from '~/assets/like.png';
 import dislike from '~/assets/dislike.png';
 import api from '~/services/api';
+import store from '~/services/storage';
 
 export default function Main({navigation}) {
   const user = navigation.getParam('id');
@@ -33,43 +36,62 @@ export default function Main({navigation}) {
     loadUsers();
   }, []); //eslint-disable-line
 
-  async function likeUser(id) {
-    await api.post(`/devs/${id}/likes`, null, {
+  async function likeUser() {
+    const [devTarget, ...rest] = devs;
+    await api.post(`/devs/${devTarget._id}/likes`, null, {
       headers: {user},
     });
-    setDevs(devs.filter(user => user._id !== id));
+    setDevs(rest);
   }
 
-  async function dislikeUser(id) {
-    await api.post(`/devs/${id}/dislikes`, null, {
+  async function dislikeUser() {
+    const [devTarget, ...rest] = devs;
+    await api.post(`/devs/${devTarget._id}/dislikes`, null, {
       headers: {user},
     });
-    setDevs(devs.filter(user => user._id !== id));
+    setDevs(rest);
+  }
+
+  async function logout() {
+    await store.delete('User');
+    navigation.navigate('Login');
   }
 
   return (
     <Container>
-      <Logo source={logo} />
+      <TouchableOpacity onPress={logout}>
+        <Logo source={logo} />
+      </TouchableOpacity>
       <CardContainer>
-        <Card>
-          <Avatar
-            source={{
-              uri: 'https://avatars1.githubusercontent.com/u/38564520?v=4',
-            }}
-          />
-          <Footer>
-            <Name>Manoel Gomes</Name>
-            <Bio>Uma referencia aq</Bio>
-          </Footer>
-        </Card>
+        {devs.length === 0 ? (
+          <Empyt>Acabou :(</Empyt>
+        ) : (
+          devs.map(({id, avatar, name, bio}) => (
+            <Card key={id}>
+              <Avatar
+                source={{
+                  uri: avatar,
+                }}
+              />
+              <Footer>
+                <Name>{name}</Name>
+                <Bio>{bio}</Bio>
+              </Footer>
+            </Card>
+          ))
+        )}
       </CardContainer>
       <Actions>
-        <Button onPress={() => {}}>
-          <ButtonImage source={dislike} />
-        </Button>
-        <Button onPress={() => {}}>
-          <ButtonImage source={like} />
-        </Button>
+        {devs.length > 0 && (
+          <>
+            <Button onPress={likeUser}>
+              <ButtonImage source={dislike} />
+            </Button>
+            <Button onPress={dislike}>
+              <ButtonImage source={like} />
+            </Button>
+          </>
+        )}
       </Actions>
     </Container>
   );

@@ -38,7 +38,7 @@ export const Avatar = styled.Image`
 
 export const Footer = styled.View`
   background: #fff;
-  margin: 15px 20px;
+  padding: 15px 20px;
 `;
 
 export const Name = styled.Text`
@@ -56,20 +56,20 @@ export const Bio = styled.Text.attrs({
   color: #999;
 `;
 
-export const Actions = styled.View``;
-
-export const Button = styled.TouchableOpacity`
+export const Actions = styled.View`
   flex-direction: row;
   margin-bottom: 30px;
 `;
 
-export const ButtonImage = styled.Image`
+export const Button = styled.TouchableOpacity`
+  height: 50px;
+  width: 50px;
   border-radius: 25px;
   background: #fff;
   justify-content: center;
   align-items: center;
   margin: 0 20px;
-  elevation: 2px;
+  elevation: 5px;
   /* shadowColor: #000;
   shadowOpacity: 0.05;
   shadowRadius: 2;
@@ -77,4 +77,13 @@ export const ButtonImage = styled.Image`
     width: 0,
     height: 2
   }; */
+`;
+
+export const ButtonImage = styled.Image``;
+
+export const Empyt = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  color: #666;
+  text-align: center;
 `;
