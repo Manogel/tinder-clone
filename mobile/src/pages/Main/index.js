@@ -12,18 +12,28 @@ import {
   Button,
   ButtonImage,
   Empyt,
+  MatchContainer,
+  MatchLogo,
+  MatchAvatar,
+  MatchName,
+  MatchBio,
+  CloseButton,
+  MatchClose,
 } from './styles';
 
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
 import logo from '~/assets/logo.png';
 import like from '~/assets/like.png';
+import itsamatch from '~/assets/itsamatch.png';
 import dislike from '~/assets/dislike.png';
 import api from '~/services/api';
+import io from 'socket.io-client';
 import store from '~/services/storage';
 
 export default function Main({navigation}) {
   const user = navigation.getParam('id');
   const [devs, setDevs] = useState([]);
+  const [devMatch, setDevMatch] = useState(null);
 
   useEffect(() => {
     async function loadUsers() {
@@ -36,11 +46,30 @@ export default function Main({navigation}) {
     loadUsers();
   }, []); //eslint-disable-line
 
+  useEffect(() => {
+    const socket = io('http://192.168.1.132:3333', {
+      query: {user},
+    });
+
+    socket.on('match', dev => {
+      console.log(dev);
+      setDevMatch(dev);
+    });
+
+    /* setTimeout(() => {
+      socket.emit('hello', {
+        message: 'Ola Mundo!'
+      })
+    }, 3000); */
+  }, [user]);
+
   async function likeUser() {
     const [devTarget, ...rest] = devs;
     await api.post(`/devs/${devTarget._id}/likes`, null, {
       headers: {user},
     });
+    console.log(devTarget);
+    console.log(rest);
     setDevs(rest);
   }
 
@@ -66,33 +95,50 @@ export default function Main({navigation}) {
         {devs.length === 0 ? (
           <Empyt>Acabou :(</Empyt>
         ) : (
-          devs.map(({id, avatar, name, bio}) => (
-            <Card key={id}>
+          devs.map((users, index) => (
+            <Card key={users._id} style={[{}, {zIndex: devs.length - index}]}>
               <Avatar
                 source={{
-                  uri: avatar,
+                  uri: users.avatar,
                 }}
               />
               <Footer>
-                <Name>{name}</Name>
-                <Bio>{bio}</Bio>
+                <Name>{users.name}</Name>
+                <Bio>{users.bio}</Bio>
               </Footer>
             </Card>
           ))
         )}
       </CardContainer>
       <Actions>
-        {devs.length > 0 && (
+        {devs.length > 0 && !devMatch && (
           <>
-            <Button onPress={likeUser}>
+            <Button onPress={dislikeUser}>
               <ButtonImage source={dislike} />
             </Button>
-            <Button onPress={dislike}>
+            <Button onPress={likeUser}>
               <ButtonImage source={like} />
             </Button>
           </>
         )}
       </Actions>
+
+      {devMatch && (
+        <MatchContainer style={{...StyleSheet.absoluteFillObject}}>
+          <MatchLogo source={itsamatch} />
+          <MatchAvatar
+            source={{
+              uri: devMatch.avatar,
+            }}
+          />
+          <MatchName>{devMatch.name}</MatchName>
+          <MatchBio>{devMatch.bio}</MatchBio>
+
+          <CloseButton onPress={() => setDevMatch(null)}>
+            <MatchClose> FECHAR </MatchClose>
+          </CloseButton>
+        </MatchContainer>
+      )}
     </Container>
   );
 }

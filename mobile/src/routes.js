@@ -11,7 +11,7 @@ const Routes = (userLogged = false) =>
         Main,
       },
       {
-        initialRouteName: userLogged ? 'Main' : 'Main',
+        initialRouteName: userLogged ? 'Main' : 'Login',
       },
     ),
   );

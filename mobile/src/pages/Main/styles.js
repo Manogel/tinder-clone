@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-
+import {StyleSheet} from 'react-native';
 export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #f5f5f5;
@@ -85,5 +85,52 @@ export const Empyt = styled.Text`
   font-size: 24px;
   font-weight: bold;
   color: #666;
+  text-align: center;
+`;
+
+export const MatchContainer = styled.View.attrs({
+
+})`
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+`;
+
+export const MatchLogo = styled.Image.attrs({
+  resizeMode: 'contain',
+})`
+  height: 60px;
+`;
+
+export const MatchAvatar = styled.Image`
+  width: 160px;
+  height: 160px;
+  border-radius: 80px;
+  border-width: 5px;
+  border-color: #fff;
+  margin: 30px 0;
+`;
+
+export const MatchName = styled.Text`
+  font-size: 26px;
+  font-weight: bold;
+  color: #fff;
+`;
+
+export const MatchBio = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  margin-top: 10px;
+  line-height: 24px;
+  text-align: center;
+  padding: 0 30px;
+`;
+
+export const CloseButton = styled.TouchableOpacity``;
+
+export const MatchClose = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+  margin-top: 30px;
   text-align: center;
 `;
